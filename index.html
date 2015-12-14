@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<title>Image processing</title>
+
+	<meta name="viewport" content="user-scalable=no, width=400, initial-scale=0.8, maximum-scale=0.8" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="yes" />
+	<meta name="format-detection" content="email=no" />
+	<meta name="HandheldFriendly" content="true" />
+
+	<script>
+		var FileAPI = {
+			debug: true
+			, media: true
+			, staticPath: 'node_modules/fileapi/dist/'
+		};
+	</script>
+	<script src="node_modules/fileapi/dist/FileAPI.min.js"></script>
+	<script src="node_modules/fileapi/plugins/caman.full.min.js"></script>
+
+	<link rel="stylesheet" href="toolkit.css"/>
+	<style>
+		body {
+			margin: 0 auto;
+			-max-width: 800px;
+			font-family: "Raleway","Helvetica Neue",Helvetica,Arial,sans-serif;
+		}
+
+		#PresetFilters a {
+
+		}
+		#PresetFilters a.Active {
+			background-color: #e69751;
+		}
+	</style>
+
+	<link rel="stylesheet" href="Jcrop/demos/demo_files/main.css" type="text/css" />
+	<link rel="stylesheet" href="Jcrop/demos/demo_files/demos.css" type="text/css" />
+	<link rel="stylesheet" href="Jcrop/css/jquery.Jcrop.css" type="text/css" />
+	<link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css" />
+
+	<script src="node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="Jcrop/js/jquery.Jcrop.js"></script>
+
+	<script src="node_modules/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+	<script src="node_modules/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
+	<script src="node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
+	<script src="node_modules/lodash/index.js"></script>
+
+	<link rel="stylesheet" href="style.css"/>
+
+	<script src="slider.js"></script>
+	<script src="glfx.js"></script>
+
+	<script src="mainController.js"></script>
+</head>
+
+
+<body>
+<img id="defaultImage" style="display: -none;" />
+<ul id="nav">
+	<li>
+		<a href="#" title="File">File</a>
+		<ul id="openFileArea">
+			<li><a href="#" id="openFile">Open</a></li>
+			<li><a href="#"><form id="downloadFile" action="download.php" method="post">Download</form></a></li>
+		</ul>
+		<!--<label for="browse" class="btn">Select photo</label>-->
+	</li>
+	<li>
+		<a href="#" title="Информация о компании">Filters</a>
+		<ul >
+			<div id="PresetFilters"><!--id="PresetFilters"-->
+			<li><a data-preset="vintage" href="#" >Vintage</a></li><!---->
+			<li><a data-preset="lomo" href="#">Lomo</a></li>
+			<li><a data-preset="clarity" href="#">Clarity</a></li>
+			<li><a data-preset="sinCity" href="#">Sin City</a></li>
+			<li><a data-preset="sunrise" href="#">Sunrise</a></li>
+			<li><a data-preset="crossProcess" href="#">Cross Process</a></li>
+			<li><a data-preset="orangePeel">Orange Peel</a></li>
+			<li><a data-preset="love">Love</a></li>
+			<li><a data-preset="grungy">Grungy</a></li>
+			<li><a data-preset="jarques">Jarques</a></li>
+			<li><a data-preset="pinhole">Pinhole</a></li>
+			<li><a data-preset="oldBoot">Old Boot</a></li>
+			<li><a data-preset="glowingSun">Glowing Sun</a></li>
+			<li><a data-preset="hazyDays" class="Active">Hazy Days</a></li>
+			<li><a data-preset="herMajesty">Her Majesty</a></li>
+			<li><a data-preset="nostalgia">Nostalgia</a></li>
+			<li><a da1ta-preset="hemingway">Hemingway</a></li>
+			<li><a data-preset="concentrate">Concentrate</a></li>
+				</div>
+		</ul>
+	</li>
+	<li>
+		<a href="#" title="Find faces">Detect faces</a>
+		<ul>
+			<li><a href="#" id="find-faces">Show</a></li>
+			<li><a href="#" id="hide-faces">Hide</a></li>
+		</ul>
+	</li>
+</ul>
+<div id="sliders">
+	<i class="fa fa-crop" id="cropBtn"></i>
+	<i class="fa fa-floppy-o" id="saveBtn"><span style="font-size: 12px;margin-left: 5px;">  Save changes</span></i>
+	<br><br>
+
+	<div class="group-tools">Brightness
+		<div id="infoBrightness" class="info">-0</div>
+		<div id="slBrightness"></div>
+		</div>
+	<div class="group-tools">Contrast
+		<div id="infoContrast" class="info">0</div>
+		<div id="slContrast"></div>
+	</div>
+	<div class="group-tools">Hue
+		<div id="infoHue" class="info">0</div>
+		<div id="slHue"></div>
+	</div>
+	<div class="group-tools">Saturation
+		<div id="infoSat" class="info">0</div>
+		<div id="slSaturation"></div>
+	</div>
+
+	<div class="group-tools">	Unsharp mask<br>Radius
+		<div id="infoRadius" class="info">0</div>
+		<div id="slRadius"></div>Strength
+		<div id="infoStrength" class="info">0</div>
+		<div id="slStrength"></div>
+	</div>
+	<div class="group-tools">Blur
+		<div id="infoBlur" class="info">0</div>
+		<div id="slBlur"></div>
+	</div>
+	<div class="group-tools">	Vignette<br>Size
+		<div id="infoSize" class="info">0</div>
+		<div id="slSize"></div>Amount
+		<div id="infoAmount" class="info">0</div>
+		<div id="slAmount"></div>
+	</div>
+	<div class="group-tools">Sepia
+		<div id="infoSepia" class="info">0</div>
+		<div id="slSepia"></div>
+	</div>
+	<div class="group-tools">Denoise
+		<div id="infoDenoise" class="info">0</div>
+		<div id="slDenoise"></div>
+	</div>
+	<div class="group-tools">Noise
+		<div id="infoNoise" class="info">0</div>
+		<div id="slNoise"></div>
+	</div>
+	<div class="group-tools">Ink
+		<div id="infoInk" class="info">0</div>
+		<div id="slInk"></div>
+	</div>
+	<div class="group-tools">Hexagonal Pixelate
+		<div id="infoHexagonalPixelate" class="info">0</div>
+		<div id="slHexagonalPixelate"></div>
+	</div>
+	<div class="group-tools">	Dot screen<br>Size
+		<div id="infoDotAngle" class="info">0</div>
+		<div id="slDotAngle"></div>Amount
+		<div id="infoDotSize" class="info">0</div>
+		<div id="slDotSize"></div>
+	</div>
+	<!--<div class="group-tools">	Color Halftone<br>Size
+		<div id="infoSize" class="info">0</div>
+		<div id="slSize"></div>Amount
+		<div id="infoAmount" class="info">0</div>
+		<div id="slAmount"></div>
+	</div>-->
+</div>
+<div id="choose">
+	<!--<label for="browse" class="btn">Select photo</label>-->
+	<form id="fileUpload" name="fileUpload">
+	<input id="browse" name="userFile" type="file" accept="image/*" style="font-size: 20px; display: none;" />
+	</form>
+	<br/>
+	<br/>
+
+</div>
+<img id="cropped" src="" style="display: none" width="100%"/>
+
+<img id="faces" src="" style="display: none" width="100%"/>
+<div id="output" style=" padding: 10px 20px 40px;margin-top: 3%;">
+
+	<div id="result" style="text-align: center; margin: 0 auto;">
+		<div class="loader"></div>
+	</div>
+
+</div>
+
+<div style="text-align: center; padding: 50px; clear: both; font-size: 20px;">
+	<div id="photoBooth" style="visibility: hidden; position: absolute; overflow: hidden; height: 0">
+		<div id="cam" style="border: 2px solid #80BD95; padding: 2px; width: 640px; height: 480px; margin: 0 auto;"></div>
+		<div id="shot" class="btn" style="border-radius: 100%; width: 80px; height: 80px; padding: 0; margin: 30px;"></div>
+	</div>
+</div>
+</body>
+</html>
