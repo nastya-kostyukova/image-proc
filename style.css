@@ -1,0 +1,170 @@
+body{
+	font-family: Roboto;
+	font-size: 13px;
+	font-family: Quicksand;
+	color: #424040;
+	margin: 0;
+	background-color:#B1AFAF;
+	max-width:100%;
+}
+#result{
+	overflow: hidden;
+	background-color: #FFF;
+
+	margin-left:5%;
+	margin-top:5%;
+	width:50%;
+}
+.group-tools{
+	color: white;
+	border: 2px dashed #C5C5C5;
+	margin-bottom: 10px;
+	padding: 3%;
+}
+#result canvas {
+	background-color: #FFF;
+}
+
+.btn{
+	margin-top: 2%;
+	margin-left: 2%;
+}
+.slider {
+	background-image: url("slider_bg.gif");
+	background-repeat: repeat-x;
+}
+.knob {
+	position: relative;
+	background-image: url(knob.gif);
+}
+#sliders{
+	float:right;
+	margin-top: 5%;
+	visibility: hidden;
+	background: url(background_main_frame.jpg);
+	padding: 1.7% 5% 1.7% 5%;
+	height: 700px;
+	overflow-y: auto;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	width: 440px;
+}
+#cropBtn, #saveBtn{
+	color: #FFF;
+	font-size: 20px;
+	border: 1px solid white;
+	padding: 10px;
+	border-radius: 3px;
+}
+#cropBtn:hover#cropBtn:hover{
+	color: #8f8f8f;
+	font-size: 20px;
+	border: 1px solid #8f8f8f;
+	padding: 10px;
+	border-radius: 3px;
+}
+#saveBtn {
+	margin-left: 50px;
+}
+#saveBtn:hover#saveBtn:hover {
+	color: #8f8f8f;
+	font-size: 20px;
+	border: 1px solid #8f8f8f;
+	padding: 10px;
+	border-radius: 3px;
+}
+
+.slider{
+	padding-bottom: 5%;
+}
+.info{
+	float: right;
+}
+
+/*------------------------------------*\
+	НАВИГАЦИЯ
+\*------------------------------------*/
+#nav{
+	float:left;
+	width:100%;
+	list-style:none;
+	font-weight:bold;
+	position: fixed;
+	top: 0;
+	background: url(background_main_frame.jpg);
+	margin: 0;
+	z-index: 11111;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+#nav li{
+	float:left;
+	margin-right:10px;
+	position:relative;
+	display:block;
+	line-height: 30px;
+}
+#nav li a{
+	display:block;
+	padding:5px;
+	color:#fff;
+	text-decoration:none;
+
+	text-shadow:1px 1px 1px rgba(0,0,0,0.75); /* Тень текста, чтобы приподнять его на немного */
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+	width: 120px;
+	text-align: center;
+
+}
+#nav li a:hover{
+	display:block;
+	color:#fff;
+	background:#6b0c36;
+	background:rgba(101, 101, 101, 0.75); /* Выглядит полупрозрачным */
+	text-decoration:underline;
+}
+
+/*--- ВЫПАДАЮЩИЕ ПУНКТЫ ---*/
+#nav ul{
+	list-style:none;
+	position:absolute;
+	left:-9999px; /* Скрываем за экраном, когда не нужно (данный метод лучше, чем display:none;) */
+	opacity:0; /* Устанавливаем начальное состояние прозрачности */
+	-webkit-transition:0.25s linear opacity; /* В Webkit выпадающие пункты будут проявляться */
+
+}
+#nav ul li{
+	padding-top:1px; /* Вводим отступ между li чтобы создать иллюзию разделенных пунктов меню */
+	float:none;
+	background:url(background_main_frame.jpg);
+
+}
+#nav ul a{
+	white-space:nowrap; /* Останавливаем перенос текста и создаем многострочный выпадающий пункт */
+	display:block;
+
+}
+#nav li:hover ul{ /* Выводим выпадающий пункт при наведении курсора */
+	left:0; /* Приносим его обратно на экран, когда нужно */
+	opacity:1; /* Делаем непрозрачным */
+}
+#nav li:hover a{ /* Устанавливаем стили для верхнего уровня, когда выводится выпадающий список */
+	background:#6b0c36;
+	background:rgba(101, 101, 101, 0.75); /* Выглядит полупрозрачным */
+	text-decoration:underline;
+}
+#nav li:hover ul a{ /* Изменяем некоторые стили верхнего уровня при выводе выпадающего пункта */
+	text-decoration:none;
+	-webkit-transition:-webkit-transform 0.075s linear;
+}
+#nav li:hover ul li a:hover{ /* Устанавливаем стили для выпадающих пунктов, когда курсор наводится на конкретный пункт */
+	background:#333;
+	background:rgba(51,51,51,0.75); /* Будет полупрозрачным */
+	text-decoration:underline;
+	-moz-transform:scale(1.05);
+	-webkit-transform:scale(1.05);
+}
+.border-face{
+	position: relative;
+	border: 2px dashed #535380;
+}
