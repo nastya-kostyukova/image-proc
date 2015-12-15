@@ -210,6 +210,7 @@ $( document ).ready(function() {
         }).done(function(json) {
            // var data = JSON.parse(json);
             console.log(json);
+            if (json[0].length == 0 ) alert("Faces are not detected!");
             for(var i = 0; i < json.length;i++) {
                 var face = document.createElement("DIV");
                 face.className = "border-face";

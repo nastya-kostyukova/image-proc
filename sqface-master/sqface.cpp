@@ -1,38 +1,9 @@
-/*
-    sqface - реализация алгоритма распознавания по методу Виолы-Джонса
-    Автор: Александр Лубягин, lubyagin@yandex.ru
-    Дата публикации: 06 декабря 2011 года
-    Опубликовано на сайте SQFACE.RU под лицензией AGPLv3
-    Текст лицензии: http://www.gnu.org/licenses/agpl-3.0.txt
-
-    Данный проект использует также код под лицензией The MIT License
-    в файлах:
-    rapidxml.hpp
-    rapidxml_iterators.hpp
-    rapidxml_print.hpp
-    rapidxml_utils.hpp
-    (см. README.txt)
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include <FreeImage.h>
-#include <stdio.h>  // printf,perror
-#include <stdlib.h> // abs,exit
-#include <time.h>   // clock
-#include <string.h> // strncmp
-#include <math.h>   // floor
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <math.h>
 
 #define DEBUG 0
 
@@ -40,14 +11,12 @@
 #define min(a,b) ((a)<(b)?(a):(b))
 #define sqr(a) ((a)*(a))
 
-// ~10-25
+
 #define MAX_STAGES 100
-// ~1-5 тыс (max)
 #define MAX_FEATURES 10000
-// ~5-10 тыс (max)
 #define MAX_RECTS 30000
 
-// 32-bit
+
 #define SUM_TYPE signed int
 #define SUM_TYPE2 signed int
 
@@ -103,7 +72,7 @@ private:
   WORD bpp0;
   WORD bypp0;
   WORD stride0;
-  FIBITMAP *dibo; // draw
+  FIBITMAP *dibo; // отрисовка
 
   // "Серая" картинка
   FIBITMAP *dib1;
@@ -248,7 +217,7 @@ TFaceRecognizer::TFaceRecognizer() {
 
 // Деструктор
 TFaceRecognizer::~TFaceRecognizer() {
-  UnloadImage(); // на всякий случай
+  UnloadImage();
   FreeImage_DeInitialise();
 }
 
@@ -264,7 +233,7 @@ int TFaceRecognizer::LoadImage(const char *filename_i) {
   p0 = FreeImage_GetBits(dib0);
   bpp0 = FreeImage_GetBPP(dib0);
   bypp0 = bpp0/8;
-  stride0 = FreeImage_GetPitch(dib0); // что такое Pitch?
+  stride0 = FreeImage_GetPitch(dib0);
   dibo = FreeImage_Clone(dib0);
 
   dib1 = FreeImage_ConvertToGreyscale(dib0);
@@ -275,16 +244,15 @@ int TFaceRecognizer::LoadImage(const char *filename_i) {
   p1 = FreeImage_GetBits(dib1);
   bpp1 = FreeImage_GetBPP(dib1);
   bypp1 = bpp1/8;
-  stride1 = FreeImage_GetPitch(dib1); // что такое Pitch?
-  //printf("bypp1 = %d\n", bypp1);
+  stride1 = FreeImage_GetPitch(dib1);
 
   // "Интегральная" матрица
   w2 = w1;
-  h2 = h1; // no crop
-  bypp2 = sizeof(SUM_TYPE); // of bytes
+  h2 = h1; // без кадрирования
+  bypp2 = sizeof(SUM_TYPE);
   bpp2 = bypp2*8; // bits
-  stride2 = w2*bypp2; // unaligned
-  p2 = (SUM_TYPE *)malloc(h2*stride2); // в байтах, (h2 x w2)
+  stride2 = w2*bypp2;
+  p2 = (SUM_TYPE *)malloc(h2*stride2);
   if(!p2) {
     perror("No free memory.\n");
     exit(-1);
@@ -292,11 +260,11 @@ int TFaceRecognizer::LoadImage(const char *filename_i) {
 
   // "Интегральная" матрица
   w3 = w1;
-  h3 = h1; // no crop
-  bypp3 = sizeof(SUM_TYPE2); // of bytes
-  bpp3 = bypp3*8; // bits
-  stride3 = w3*bypp3; // unaligned
-  p3 = (SUM_TYPE2 *)malloc(h3*stride3); // в байтах, (h3 x w3)
+  h3 = h1; // без кадрирования
+  bypp3 = sizeof(SUM_TYPE2);
+  bpp3 = bypp3*8;
+  stride3 = w3*bypp3;
+  p3 = (SUM_TYPE2 *)malloc(h3*stride3);
   if(!p3) {
     perror("No free memory.\n");
     exit(-1);
@@ -336,47 +304,6 @@ int TFaceRecognizer::LoadImage(const char *filename_i) {
         p3[w3*(y-1)+(x-1)];
     }
   }
-  // p0
-  for (y = 0; y < 4; y++) {
-    for (x = 0; x < 4; x++) {
-      //printf(" %02X", p0[stride0*y+bypp0*x+2]);
-    }
-    //printf("\n");
-  }
-  //printf("\n");
-  // p1
-  for (y = 0; y < 4; y++) {
-    for (x = 0; x < 4; x++) {
-     // printf(" %02X", p1[stride1*y+bypp1*x+0]);
-    }
-   // printf("\n");
-  }
- // printf("\n");
-  // p1 (dec)
-  for (y = 0; y < 4; y++) {
-    for (x = 0; x < 4; x++) {
-     // printf(" %3d", p1[stride1*y+bypp1*x+0]);
-    }
-   // printf("\n");
-  }
-//  printf("\n");
-
-  // p2
-  for (y = 0; y < 4; y++) {
-    for (x = 0; x < 4; x++) {
- //     printf(" %9d", p2[w2*y+x]);
-    }
- //   printf("\n");
-  }
- // printf("\n");
-
-  // p3
-  for (y = 0; y < 4; y++) {
-    for (x = 0; x < 4; x++) {
- //     printf(" %9d", p3[w3*y+x]);
-    }
-//    printf("\n");
-  }
   return 0;
 }
 
@@ -393,7 +320,6 @@ using namespace std;
 using namespace rapidxml;
 
 int TFaceRecognizer::LoadCascadeXML(const char *filename_i_txt) {
-  // Read file
   ifstream f(filename_i_txt);
   string xml;
   string line;
@@ -401,11 +327,9 @@ int TFaceRecognizer::LoadCascadeXML(const char *filename_i_txt) {
   std::vector<char> xml_copy(xml.begin(), xml.end());
   xml_copy.push_back('\0');
 
-  // Parse and print file
   xml_document<> doc;
   doc.parse<0>(&xml_copy[0]);
 
-  // Cycles
   xml_node<> *node1 = doc.first_node("opencv_storage");
   if(!node1) return -1;
   xml_node<> *node2 = node1->first_node();//"haarcascade_frontalface_alt");
@@ -434,16 +358,13 @@ int TFaceRecognizer::LoadCascadeXML(const char *filename_i_txt) {
 
     xml_node<> *node9 = node5->first_node("stage_threshold");
     if(!node9) {return -1;}
-   // std::cout << "stage_threshold " << node9->value() << "\n";
     float stage_threshold = atof(node9->value());
 
     xml_node<> *node10 = node5->first_node("parent");
     if(!node10) {return -1;}
- //   std::cout << "parent " << node10->value() << "\n";
 
     xml_node<> *node11 = node5->first_node("next");
     if(!node11) {return -1;}
-  //  std::cout << "next " << node11->value() << "\n";
 
     this->stages[i_stage].n_features = 0;
     this->stages[i_stage].n_rects = 0;
@@ -454,7 +375,7 @@ int TFaceRecognizer::LoadCascadeXML(const char *filename_i_txt) {
     xml_node<> *node7 = node6->first_node("_");
     if(!node7) {return -1;}
   
-    xml_node<> *node8 = node7->first_node("_"); // tree ...
+    xml_node<> *node8 = node7->first_node("_");
     if(!node8) {return -1;}
     do {
       
@@ -487,7 +408,6 @@ int TFaceRecognizer::LoadCascadeXML(const char *filename_i_txt) {
       }
 
       this->features[i_feature_abs].i_stage = i_stage;
-//      this->features[i_feature_abs].n_rects = n_rects; // see rects
       this->features[i_feature_abs].feature_threshold = feature_threshold;
       this->features[i_feature_abs].left_val = left_val;
       this->features[i_feature_abs].right_val = right_val;
@@ -551,9 +471,7 @@ int TFaceRecognizer::LoadCascadeXML(const char *filename_i_txt) {
 
 // Записать изображение
 int TFaceRecognizer::SaveImage(const char *filename_o) {
-//  FreeImage_FlipVertical(dib1);
- // printf("Save: %s\n", filename_o);
- // printf("w = %d\n", FreeImage_GetWidth(dib0));
+  FreeImage_FlipVertical(dib1);
   FreeImage_Save(FreeImage_GetFIFFromFilename(filename_o), dib0, filename_o, 0);
   return 0;
 }
@@ -570,9 +488,7 @@ int TFaceRecognizer::UnloadImage() {
 
 // Распознать лица
 int TFaceRecognizer::Recognize(float factor) {
-  for (int i_stage = 0; i_stage < cascade.n_stages; i_stage++) {
-//    printf("stage %d: %d rects\n", i_stage+1, this->stages[i_stage].n_rects);
-  }
+
   clock_t t1 = clock();
   // Перевести в градации серого
   // Уменьшить картинку до других размеров, по этапам rescaling'а
@@ -580,10 +496,10 @@ int TFaceRecognizer::Recognize(float factor) {
   int i = 0;
   int window_w = cascade.window_w_mini;
   int window_h = cascade.window_h_mini;
-  // Можно сделать scaling по-убывающей, с наибольших квадратов
+
   int count_window = 0;
 #define MAX_W 120
-  int a_ds[MAX_W]; // dscale
+  int a_ds[MAX_W];
   unsigned long long count_rect_total = 0;
   unsigned long long count_rect_total_used = 0;
   int i_face = 1;
@@ -620,7 +536,7 @@ int TFaceRecognizer::Recognize(float factor) {
                      i_rect_abs <= this->features[i_feature_abs].i_rect_abs_2;
                      i_rect_abs++) {
               int weight = (this->rects[i_rect_abs].weight);
-              // перенес сюда - уменьшил 42 -> 28 sec
+
               int x_r_scaled = a_ds[this->rects[i_rect_abs].x];
               int y_r_scaled = a_ds[this->rects[i_rect_abs].y];
               int w_r_scaled = a_ds[this->rects[i_rect_abs].w];
@@ -637,9 +553,9 @@ int TFaceRecognizer::Recognize(float factor) {
 
             if (sum_stage > this->stages[i_stage].stage_threshold) {
               f_passed = 1;
-              //break;
+              //выход
             }
-          } // features
+          }
           sum_cascade += (float)sum_stage;
           if (sum_stage < this->stages[i_stage].stage_threshold) {
             f_failed = 1;
@@ -678,21 +594,11 @@ int TFaceRecognizer::Recognize(float factor) {
       }
     }
     count_rect_total += count_rect;
-  /*  printf("%d: %d x %d, scale = %.4f; windows = %d; rects = %llu (%llu)\n",
-      i,
-      window_w,
-      window_h,
-      dscale,
-      count_window,
-      count_rect_total,
-      count_rect_total_used
-    );*/
 
     dscale *= factor;
   } while(min(w1,h1) >= min(window_w,window_h));
 
   clock_t t2 = clock();
-  //printf("%.4f seconds\n", (t2-t1)/(double)(CLOCKS_PER_SEC));
   return 0;
 }
 

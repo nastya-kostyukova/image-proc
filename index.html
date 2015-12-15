@@ -46,9 +46,6 @@
 	<script src="node_modules/jquery/dist/jquery.min.js"></script>
 	<script src="Jcrop/js/jquery.Jcrop.js"></script>
 
-	<script src="node_modules/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
-	<script src="node_modules/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
-	<script src="node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
 	<script src="node_modules/lodash/index.js"></script>
 
 	<link rel="stylesheet" href="style.css"/>
@@ -57,6 +54,13 @@
 	<script src="glfx.js"></script>
 
 	<script src="mainController.js"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.css">
+	<!-- подключаем библиотеку Mocha -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.css">
+	<!-- подключаем библиотеку Mocha -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.js"></script>
 </head>
 
 
@@ -67,14 +71,13 @@
 		<a href="#" title="File">File</a>
 		<ul id="openFileArea">
 			<li><a href="#" id="openFile">Open</a></li>
-			<li><a href="#"><form id="downloadFile" action="download.php" method="post">Download</form></a></li>
+			<li><a href="#"><form id="downloadFile" action="download.php" method="post" style="margin: 0;padding: 0">Download</form></a></li>
 		</ul>
-		<!--<label for="browse" class="btn">Select photo</label>-->
 	</li>
 	<li>
-		<a href="#" title="Информация о компании">Filters</a>
+		<a href="#" title="Filters">Filters</a>
 		<ul >
-			<div id="PresetFilters"><!--id="PresetFilters"-->
+			<div id="PresetFilters">
 			<li><a data-preset="vintage" href="#" >Vintage</a></li><!---->
 			<li><a data-preset="lomo" href="#">Lomo</a></li>
 			<li><a data-preset="clarity" href="#">Clarity</a></li>
@@ -168,15 +171,8 @@
 		<div id="infoDotSize" class="info">0</div>
 		<div id="slDotSize"></div>
 	</div>
-	<!--<div class="group-tools">	Color Halftone<br>Size
-		<div id="infoSize" class="info">0</div>
-		<div id="slSize"></div>Amount
-		<div id="infoAmount" class="info">0</div>
-		<div id="slAmount"></div>
-	</div>-->
 </div>
 <div id="choose">
-	<!--<label for="browse" class="btn">Select photo</label>-->
 	<form id="fileUpload" name="fileUpload">
 	<input id="browse" name="userFile" type="file" accept="image/*" style="font-size: 20px; display: none;" />
 	</form>
@@ -201,5 +197,15 @@
 		<div id="shot" class="btn" style="border-radius: 100%; width: 80px; height: 80px; padding: 0; margin: 30px;"></div>
 	</div>
 </div>
+
+<script src="test.js"></script>
+
+<!-- в элементе с id="mocha" будут результаты тестов -->
+<div id="mocha"></div>
+
+<!-- запустить тесты! -->
+<script>
+	mocha.run();
+</script>
 </body>
 </html>
