@@ -32,12 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
     $coords = array();
     $coords[] = array();
-    //var_dump($output);
     for($i = 0; $i < count($output); $i++) {
         $temp = explode(' ', $output[$i]);
         $coords[$i] = array('x1' => $temp[0], 'y1' => $temp[1],'x2' => $temp[2],'y2' => $temp[3]);
     }
-    //$coords['url'] = 'http://'.$_SERVER['HTTP_HOST'].'/assets/'.$resFileName;
     header('Content-type: application/json');
     $json = json_encode($coords);
     print $json;

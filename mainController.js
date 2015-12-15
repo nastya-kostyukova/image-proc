@@ -17,7 +17,6 @@ $( document ).ready(function() {
         sliderHexagonalPixelate = new slider('slHexagonalPixelate', 400, 1, 200, 1, document.getElementById('infoHexagonalPixelate')),
         sliderDotScreenAngle = new slider('slDotAngle', 400, 0, 200, 1, document.getElementById('infoDotAngle')),
         sliderDotSize = new slider('slDotSize', 400, 1, 200, 1, document.getElementById('infoDotSize')),
-      //  sliderColorHalftone = new slider('slColorHalftone', 400, 0, 200, 1, document.getElementById('infoColorHalftone')),
         isChanged = false,
         imageBase64;
     sliderBrightness.setValue(0);
@@ -96,7 +95,6 @@ $( document ).ready(function() {
     }
 
     function blobToFile(theBlob, fileName){
-        //A Blob() is almost a File() - it's just missing the two properties below which we will add
         theBlob.lastModifiedDate = new Date();
         theBlob.name = fileName;
         return theBlob;
@@ -141,10 +139,8 @@ $( document ).ready(function() {
         }).done(function(url) {
 
             convertToDataURLviaCanvas(function(base64Img){
-                //file = base64Img;
 
                 function getBase64Image(img) {
-                    // Create an empty canvas element
                     var cv = document.createElement("canvas");
                     cv.width = img.width;
                     cv.height = img.height;
@@ -153,10 +149,6 @@ $( document ).ready(function() {
                     var ctx = cv.getContext("2d");
                     ctx.drawImage(img, 0, 0);
 
-                    // Get the data-URL formatted image
-                    // Firefox supports PNG and JPEG. You could check img.src to
-                    // guess the original format, but be aware the using "image/jpg"
-                    // will re-encode the image.
                     var dataURL = cv.toDataURL("image/png");
 
                     return dataURL;
@@ -173,7 +165,7 @@ $( document ).ready(function() {
 
                         jcrop_api.setImage(url,function(){
                             jcrop_api = this;
-                            //file = _img;
+
                         });
 
                         if (canvas.scale)
@@ -208,7 +200,6 @@ $( document ).ready(function() {
             method: 'POST',
             data: data
         }).done(function(json) {
-           // var data = JSON.parse(json);
             console.log(json);
             if (json[0].length == 0 ) alert("Faces are not detected!");
             for(var i = 0; i < json.length;i++) {
@@ -221,7 +212,9 @@ $( document ).ready(function() {
                     "height: "+ (json[i]['y2'] - json[i]['y1']) + "px;" +
                     "width: "+ (json[i]['x2'] - json[i]['x1'])  + "px;z-index: "+ (700 +i));
                 $('.jcrop-holder').append(face);
+
             }
+        //    mocha.run();
         });
 
     }
@@ -246,6 +239,9 @@ $( document ).ready(function() {
         if( file ){
             _applyFilter(true);
         }
+
+        mocha.run();
+
     });
 
     // Set filter
@@ -256,11 +252,8 @@ $( document ).ready(function() {
                 filter = el.dataset.preset;
                 processing = {el: el, html: el.innerHTML};
 
-                //document.getElementsByClassName('Active').remove('Active');
                 if($('.Active').hasClass('Active'))
                     $('.Active').removeClass('Active');
-
-                //el.innerHTML = 'Rendering&hellip;';
                 el.className = 'Active';
 
                 _applyFilter();
@@ -273,13 +266,6 @@ $( document ).ready(function() {
         }
 
         output.style.display = '';
-
-        /*var data = {
-            x: coords && coords.x ? coords.x : 0,
-            y: coords && coords.y ? coords.y: 0,
-            height: coords && coords.h ? coords.h : 768,
-            width: coords && coords.w ? coords.w : 1024
-        };*/
 
         FileAPI.Image(file)
             .resize(1024, 768, 'max')
@@ -299,18 +285,6 @@ $( document ).ready(function() {
                     canvas.draw(defaultTexture).update();
                 }
                 data_caman_id++;
-
-                if(jcrop_api && typeof jcrop_api.destroy === 'function') {
-                   /* jcrop_api.destroy();
-
-                   /* $('#output').prepend('<div id="result"></div>');
-                    $('#result').append(img);
-
-                    $('.jcrop-holder').width(img.width).height(img.height);
-                    $('.jcrop-tracker').width(img.width).height(img.height);*/
-                    //$('#result').width(img.width).height(img.height);
-                }
-
 
                 $('#result').Jcrop({
                     onChange:   showCoords,
